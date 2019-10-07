@@ -1,0 +1,30 @@
+{
+  "name": "3dm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/App.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js -e js,hbs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kulaszewicz/3DM.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "hbs": "^4.0.5",
+    "mathjs": "^6.2.3",
+    "request": "^2.88.0"
+  },
+  "bugs": {
+    "url": "https://github.com/kulaszewicz/3DM/issues"
+  },
+  "devDependencies": {
+    "nodemon": "1.9.2"
+  },
+  "homepage": "https://github.com/kulaszewicz/3DM#readme"
+}
