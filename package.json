@@ -15,16 +15,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1",
-    "hbs": "^4.0.5",
-    "mathjs": "^6.2.3",
-    "request": "^2.88.0"
+    "mathjs": "^6.2.3"
   },
   "bugs": {
     "url": "https://github.com/kulaszewicz/3DM/issues"
   },
   "devDependencies": {
-    "nodemon": "1.9.2"
+    "nodemon": "^1.19.3"
   },
   "homepage": "https://github.com/kulaszewicz/3DM#readme"
 }
