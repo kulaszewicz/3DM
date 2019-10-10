@@ -20,11 +20,42 @@ const threeDM = {
     }
 };
 
-threeDM.X = [1,2,3];
-threeDM.Y = [1,2,2];
+const handleFindM = () => {
+    const T = threeDM.T;
+    const testSolution  = [];
+    const usedSetIndices = {
+        X: [],
+        Y: [],
+        Z: [],
+    };
+    for (let i = 0; i < T.length; i++) {
+        if (usedSetIndices.X.includes(T[i][0]) || usedSetIndices.Y.includes(T[i][1]) || usedSetIndices.Z.includes(T[i][2])) {
+            //console.log(T[i]);
+        } else {
+            testSolution.push(T[i]);
+            usedSetIndices.X.push(T[i][0]);
+            usedSetIndices.Y.push(T[i][1]);
+            usedSetIndices.Z.push(T[i][2]);
+        }
+    }
+    return {
+        solutionM: testSolution,
+        solutionMLength: testSolution.length,
+    };
+};
+
+const handleGoal = (solution) => {
+    // TODO Rate solution
+};
+
+threeDM.X = [1,2,3,5,8];
+threeDM.Y = [1,2,3,9,4];
 threeDM.Z = [1,2,3,4];
 
 
 threeDM.generateT();
 
 console.log(threeDM.T);
+console.log('-------');
+console.log(handleFindM());
+
