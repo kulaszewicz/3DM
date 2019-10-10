@@ -3,6 +3,23 @@ const math = require("mathjs");
 const f = (a, b) => [].concat(...a.map(d => b.map(e => [].concat(d, e))));
 const cartesian = (a, b, ...c) => (b ? cartesian(f(a, b), ...c) : a);
 
+function perm(xs) {
+    let ret = [];
+
+    for (let i = 0; i < xs.length; i = i + 1) {
+        let rest = perm(xs.slice(0, i).concat(xs.slice(i + 1)));
+
+        if(!rest.length) {
+            ret.push([xs[i]])
+        } else {
+            for(let j = 0; j < rest.length; j = j + 1) {
+                ret.push([xs[i]].concat(rest[j]))
+            }
+        }
+    }
+    return ret;
+}
+
 const threeDM = {
     X: [],  //X, Y, Z are finite disjoint sets
     Y: [],
@@ -20,26 +37,39 @@ const threeDM = {
     }
 };
 
-const handleFindM = () => {
+const handleFindMBrute = () => {
     const T = threeDM.T;
-    const testSolution  = [];
+    const testSolution = [];
+    const usedSolutions = [];
     const usedSetIndices = {
         X: [],
         Y: [],
         Z: [],
     };
-    for (let i = 0; i < T.length; i++) {
-        if (usedSetIndices.X.includes(T[i][0]) || usedSetIndices.Y.includes(T[i][1]) || usedSetIndices.Z.includes(T[i][2])) {
-            //console.log(T[i]);
-        } else {
-            testSolution.push(T[i]);
-            usedSetIndices.X.push(T[i][0]);
-            usedSetIndices.Y.push(T[i][1]);
-            usedSetIndices.Z.push(T[i][2]);
+    const permArray = [];
+    for (let k = 0; k < T.length; k++){
+        permArray.push(k);
+    }
+    const allPerms = perm(permArray);
+    for (let j = 0; j < allPerms.length; j++){
+        for (let i = 0; i < T.length; i++) {
+            if (usedSetIndices.X.includes(T[allPerms[j][i]][0]) || usedSetIndices.Y.includes(T[allPerms[j][i]][1]) || usedSetIndices.Z.includes(T[allPerms[j][i]][2])) {
+                //console.log(T[i]);
+            } else {
+                testSolution.push(T[i]);
+                usedSetIndices.X.push(T[i][0]);
+                usedSetIndices.Y.push(T[i][1]);
+                usedSetIndices.Z.push(T[i][2]);
+            }
+        }
+        if (!usedSolutions.includes(testSolution)){
+            usedSolutions.push(testSolution);
         }
     }
     return {
+        subsetT: threeDM.T,
         solutionM: testSolution,
+        solutions: usedSolutions,
         solutionMLength: testSolution.length,
     };
 };
@@ -48,14 +78,27 @@ const handleGoal = (solution) => {
     // TODO Rate solution
 };
 
-threeDM.X = [1,2,3,5,8];
-threeDM.Y = [1,2,3,9,4];
+threeDM.X = [1,2,3];
+threeDM.Y = [1,2,3];
 threeDM.Z = [1,2,3,4];
+//threeDM.generateT();
+
+const mockedTSubset = [
+    [ 1, 2, 2 ],
+    [ 2, 1, 1 ],
+    [ 3, 2, 3 ],
+    [ 1, 3, 3 ],
+    [ 3, 3, 4 ],
+];
+
+threeDM.T = mockedTSubset;
 
 
-threeDM.generateT();
-
-console.log(threeDM.T);
 console.log('-------');
-console.log(handleFindM());
+console.log(handleFindMBrute());
+console.log('-------');
+
+const test = handleFindMBrute();
+
+console.log(test.solutions[0][0]);
 
