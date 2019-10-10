@@ -1,7 +1,18 @@
 const math = require("mathjs");
+const lodash = require("lodash");
 
 const f = (a, b) => [].concat(...a.map(d => b.map(e => [].concat(d, e))));
 const cartesian = (a, b, ...c) => (b ? cartesian(f(a, b), ...c) : a);
+
+function include(arr, value) {
+    const stringifiedValue = JSON.stringify(value);
+    for (const val of arr) {
+        if (JSON.stringify(val) === stringifiedValue) {
+            return true;
+        }
+    }
+    return false;
+}
 
 function perm(xs) {
     let ret = [];
@@ -19,6 +30,7 @@ function perm(xs) {
     }
     return ret;
 }
+
 
 const threeDM = {
     X: [],  //X, Y, Z are finite disjoint sets
@@ -39,9 +51,10 @@ const threeDM = {
 
 const handleFindMBrute = () => {
     const T = threeDM.T;
-    const testSolution = [];
+    let testSolution = [];
     const usedSolutions = [];
-    const usedSetIndices = {
+    const allSolutions = [];
+    let usedSetIndices = {
         X: [],
         Y: [],
         Z: [],
@@ -54,23 +67,29 @@ const handleFindMBrute = () => {
     for (let j = 0; j < allPerms.length; j++){
         for (let i = 0; i < T.length; i++) {
             if (usedSetIndices.X.includes(T[allPerms[j][i]][0]) || usedSetIndices.Y.includes(T[allPerms[j][i]][1]) || usedSetIndices.Z.includes(T[allPerms[j][i]][2])) {
-                //console.log(T[i]);
+                continue;
             } else {
-                testSolution.push(T[i]);
-                usedSetIndices.X.push(T[i][0]);
-                usedSetIndices.Y.push(T[i][1]);
-                usedSetIndices.Z.push(T[i][2]);
+                testSolution.push(T[allPerms[j][i]]);
+                usedSetIndices.X.push(T[allPerms[j][i]][0]);
+                usedSetIndices.Y.push(T[allPerms[j][i]][1]);
+                usedSetIndices.Z.push(T[allPerms[j][i]][2]);
             }
         }
-        if (!usedSolutions.includes(testSolution)){
+        if (!include(usedSolutions, testSolution)){ // get an array of *unique solutions ; * - some triplets combinations are the same but chosen in different order
             usedSolutions.push(testSolution);
         }
+        allSolutions.push(testSolution);
+        usedSetIndices = {
+            X: [],
+            Y: [],
+            Z: [],
+        };
+        testSolution = [];
     }
     return {
         subsetT: threeDM.T,
-        solutionM: testSolution,
-        solutions: usedSolutions,
-        solutionMLength: testSolution.length,
+        uniqueSolutions: usedSolutions,
+        allSolutions
     };
 };
 
@@ -78,8 +97,8 @@ const handleGoal = (solution) => {
     // TODO Rate solution
 };
 
-threeDM.X = [1,2,3];
-threeDM.Y = [1,2,3];
+threeDM.X = [1,2,3,4];
+threeDM.Y = [1,2,3,4];
 threeDM.Z = [1,2,3,4];
 //threeDM.generateT();
 
@@ -100,5 +119,10 @@ console.log('-------');
 
 const test = handleFindMBrute();
 
-console.log(test.solutions[0][0]);
+console.log(test.uniqueSolutions);
 
+    // [ 1, 2, 2 ],
+    // [ 2, 1, 1 ],
+    // [ 3, 2, 3 ],
+    // [ 1, 3, 3 ],
+    // [ 3, 3, 4 ],
