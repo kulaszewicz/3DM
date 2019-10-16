@@ -1,5 +1,5 @@
 const math = require("mathjs");
-const lodash = require("lodash");
+const fs = require('fs');
 
 const f = (a, b) => [].concat(...a.map(d => b.map(e => [].concat(d, e))));
 const cartesian = (a, b, ...c) => (b ? cartesian(f(a, b), ...c) : a);
@@ -49,8 +49,8 @@ const threeDM = {
     }
 };
 
-const handleFindMBrute = () => {
-    const T = threeDM.T;
+const handleFindMBrute = (X,Y,Z,T) => {
+   // const T = threeDM.T;
     let testSolution = [];
     const usedSolutions = [];
     const allSolutions = [];
@@ -87,6 +87,9 @@ const handleFindMBrute = () => {
         testSolution = [];
     }
     return {
+        X,
+        Y,
+        Z,
         subsetT: threeDM.T,
         uniqueSolutions: usedSolutions,
         allSolutions
@@ -94,13 +97,13 @@ const handleFindMBrute = () => {
 };
 
 const handleGoal = (solution) => {
-    // TODO Rate solution
+    return solution && solution.length ? solution.length : -1;
 };
 
 threeDM.X = [1,2,3,4];
 threeDM.Y = [1,2,3,4];
 threeDM.Z = [1,2,3,4];
-//threeDM.generateT();
+// threeDM.generateT(); // Generating T subset with my own function
 
 const mockedTSubset = [
     [ 1, 2, 2 ],
@@ -112,16 +115,35 @@ const mockedTSubset = [
 
 threeDM.T = mockedTSubset;
 
+//const data = handleFindMBrute(threeDM.X, threeDM.Y, threeDM.Z, threeDM.T);
 
-console.log('-------');
-console.log(handleFindMBrute());
-console.log('-------');
+const fileDataRaw = fs.readFileSync("./src/data/3dm.json"); // Raw data buffer from file
 
-const test = handleFindMBrute();
+const fileData = JSON.parse(fileDataRaw); // Data parsed to object
 
-console.log(test.uniqueSolutions);
+const {X, Y, Z, subsetT} = fileData; //Destructuring parameters
 
-    // [ 1, 2, 2 ],
+const bruteDataFromFile = handleFindMBrute(X,Y,Z,subsetT); //Brute
+
+const jsonData = JSON.stringify(bruteDataFromFile); // Stringify Json to save file
+
+console.log(bruteDataFromFile.uniqueSolutions); // log of *unique solutions
+
+const solutionsRatings = bruteDataFromFile.uniqueSolutions.map((solution) => handleGoal(solution)); // Array of all solutions ratings
+
+console.log(solutionsRatings);
+
+fs.writeFile("./src/data/3dm.json", jsonData, function(err) {
+
+    if(err) {
+        return console.log(err);
+    }
+
+    console.log("The file was saved!");
+});
+
+
+    // [ 1, 2, 2 ], // Testing subset from Wikipedia
     // [ 2, 1, 1 ],
     // [ 3, 2, 3 ],
     // [ 1, 3, 3 ],
