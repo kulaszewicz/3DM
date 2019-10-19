@@ -1,5 +1,6 @@
 const math = require("mathjs");
 const fs = require('fs');
+const Combinatorics = require('js-combinatorics');
 
 const f = (a, b) => [].concat(...a.map(d => b.map(e => [].concat(d, e))));
 const cartesian = (a, b, ...c) => (b ? cartesian(f(a, b), ...c) : a);
@@ -13,24 +14,6 @@ function include(arr, value) {
     }
     return false;
 }
-
-function perm(xs) {
-    let ret = [];
-
-    for (let i = 0; i < xs.length; i = i + 1) {
-        let rest = perm(xs.slice(0, i).concat(xs.slice(i + 1)));
-
-        if(!rest.length) {
-            ret.push([xs[i]])
-        } else {
-            for(let j = 0; j < rest.length; j = j + 1) {
-                ret.push([xs[i]].concat(rest[j]))
-            }
-        }
-    }
-    return ret;
-}
-
 
 const threeDM = {
     X: [],  //X, Y, Z are finite disjoint sets
@@ -63,7 +46,7 @@ const handleFindMBrute = (X,Y,Z,T) => {
     for (let k = 0; k < T.length; k++){
         permArray.push(k);
     }
-    const allPerms = perm(permArray);
+    const allPerms = Combinatorics.permutation(permArray).toArray();
     for (let j = 0; j < allPerms.length; j++){
         for (let i = 0; i < T.length; i++) {
             if (usedSetIndices.X.includes(T[allPerms[j][i]][0]) || usedSetIndices.Y.includes(T[allPerms[j][i]][1]) || usedSetIndices.Z.includes(T[allPerms[j][i]][2])) {
@@ -78,7 +61,7 @@ const handleFindMBrute = (X,Y,Z,T) => {
         if (!include(usedSolutions, testSolution)){ // get an array of *unique solutions ; * - some triplets combinations are the same but chosen in different order
             usedSolutions.push(testSolution);
         }
-        allSolutions.push(testSolution);
+       // allSolutions.push(testSolution);
         usedSetIndices = {
             X: [],
             Y: [],
@@ -92,7 +75,7 @@ const handleFindMBrute = (X,Y,Z,T) => {
         Z,
         subsetT: threeDM.T,
         uniqueSolutions: usedSolutions,
-        allSolutions
+        //allSolutions
     };
 };
 
@@ -100,22 +83,36 @@ const handleGoal = (solution) => {
     return solution && solution.length ? solution.length : -1;
 };
 
-threeDM.X = [1,2,3,4];
-threeDM.Y = [1,2,3,4];
+const handleNextSolution = (solution) => {
+    // TODO Modify solution (optimize)
+    const isSolutionGoodEnough = false;
+    while (!isSolutionGoodEnough){
+        handleNextSolution(solution)
+    }
+};
+
+threeDM.X = [1,2,3];
+threeDM.Y = [1,2,3];
 threeDM.Z = [1,2,3,4];
-// threeDM.generateT(); // Generating T subset with my own function
+threeDM.generateT(); // Generating T subset with my own function
 
-const mockedTSubset = [
-    [ 1, 2, 2 ],
-    [ 2, 1, 1 ],
-    [ 3, 2, 3 ],
-    [ 1, 3, 3 ],
-    [ 3, 3, 4 ],
-];
+// const mockedTSubset = [
+//     [ 1, 2, 2 ],
+//     [ 2, 1, 1 ],
+//     [ 3, 2, 3 ],
+//     [ 1, 3, 3 ],
+//     [ 3, 3, 4 ],
+// ];
 
-threeDM.T = mockedTSubset;
+// threeDM.T = mockedTSubset;
 
-//const data = handleFindMBrute(threeDM.X, threeDM.Y, threeDM.Z, threeDM.T);
+const data = handleFindMBrute(threeDM.X, threeDM.Y, threeDM.Z, threeDM.T);
+
+
+const solutionRatings = data.uniqueSolutions.map((solution) => handleGoal(solution));
+ console.log(data);
+ console.log(data.uniqueSolutions);
+console.log(solutionRatings);
 
 const fileDataRaw = fs.readFileSync("./src/data/3dm.json"); // Raw data buffer from file
 
@@ -127,11 +124,11 @@ const bruteDataFromFile = handleFindMBrute(X,Y,Z,subsetT); //Brute
 
 const jsonData = JSON.stringify(bruteDataFromFile); // Stringify Json to save file
 
-console.log(bruteDataFromFile.uniqueSolutions); // log of *unique solutions
+// console.log(bruteDataFromFile.uniqueSolutions); // log of *unique solutions
 
 const solutionsRatings = bruteDataFromFile.uniqueSolutions.map((solution) => handleGoal(solution)); // Array of all solutions ratings
 
-console.log(solutionsRatings);
+// console.log(solutionsRatings);
 
 fs.writeFile("./src/data/3dm.json", jsonData, function(err) {
 

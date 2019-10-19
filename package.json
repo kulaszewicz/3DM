@@ -15,8 +15,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "js-combinatorics": "^0.5.4",
     "lodash": "^4.17.15",
-    "mathjs": "^6.2.3"
+    "mathjs": "^6.2.3",
+    "permutation": "0.0.1"
   },
   "bugs": {
     "url": "https://github.com/kulaszewicz/3DM/issues"
