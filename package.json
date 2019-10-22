@@ -15,6 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "convert-hrtime": "^3.0.0",
     "js-combinatorics": "^0.5.4",
     "lodash": "^4.17.15",
     "mathjs": "^6.2.3",
