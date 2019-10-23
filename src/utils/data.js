@@ -11,8 +11,8 @@ const getFileData = (file) => {
     }
 };
 
-const postFileData = (data) => {
-    fs.writeFile("./src/data/3dm.json", data, function(err) {
+const postFileData = (data, file) => {
+    fs.writeFile(`./src/data/output/${file}.json`, data, { flag: 'w' }, function(err) {
         if(err) {
             return console.log(err);
         }

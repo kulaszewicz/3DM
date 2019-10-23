@@ -21,7 +21,7 @@ console.log(solutionRatings);
 
 const dataToSave = JSON.stringify({results, solutionRatings});
 
-postFileData(dataToSave);
+postFileData(dataToSave, fileName ? fileName : "rGenerated");
 
 
 
