@@ -1,6 +1,8 @@
 const {getFileData, postFileData } = require("./utils/data");
 const handleBruteForce = require("./solutionFinders/Brute");
-const { handleGoal } = require("./utils/solution");
+const HillClimbR = require("./solutionFinders/HillClimbR");
+const { handleGoal, handleGetNeighbourSolutions } = require("./utils/solution");
+
 const threeDM  = require("./models/ThreeDM");
 
 const fileName = process.argv[2]; // command input
@@ -11,6 +13,9 @@ threeDM.X = [1,2,3];
 threeDM.Y = [1,2,3,4];
 threeDM.Z = [1,2,3,4];
 threeDM.generateT(); // Generating T subset with my own function
+
+HillClimbR(data);
+//console.log(handleGetNeighbourSolutions(data.T, 300, 3000));
 
 const results = handleBruteForce(data ? data : threeDM); // brute results
 

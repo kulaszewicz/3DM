@@ -1,13 +1,14 @@
 const Combinatorics = require('js-combinatorics');
 const { include } = require("../utils/math");
 const convertHrtime = require('convert-hrtime');
+const { handleTestGoal } = require('../utils/solution');
 // Brute force search
 const handleFindMBrute = ({X,Y,Z,T}) => {
     const hrstart = process.hrtime();
-    let testSolution = [];
     const usedSolutions = [];
+    let testSolution = [];
     //const allSolutions = [];
-    let usedSetIndices = {
+    let initialIndices = {
         X: [],
         Y: [],
         Z: [],
@@ -16,28 +17,46 @@ const handleFindMBrute = ({X,Y,Z,T}) => {
     for (let k = 0; k < T.length; k++){
         permArray.push(k);
     }
-    Combinatorics.permutation(permArray).forEach(e => {
+    let usedIndices = {};
+    Combinatorics.permutation(permArray).forEach((e) => {
         for (let i = 0; i < T.length; i++) {
-            //console.log(`${(e[0] / T.length)* 100}%`);
-            if (usedSetIndices.X.includes(T[e[i]][0]) || usedSetIndices.Y.includes(T[e[i]][1]) || usedSetIndices.Z.includes(T[e[i]][2])) {
-                continue;
+            if (i === 0 ) {
+                let { validPacka, cachedUsedIndices } = handleTestGoal(T[e[i]], {
+                    X: [],
+                    Y: [],
+                    Z: [],
+                });
+                usedIndices = cachedUsedIndices;
+                if (validPacka) {
+                    testSolution.push(validPacka);
+                }
             } else {
-                testSolution.push(T[e[i]]);
-                usedSetIndices.X.push(T[e[i]][0]);
-                usedSetIndices.Y.push(T[e[i]][1]);
-                usedSetIndices.Z.push(T[e[i]][2]);
+                let { validPacka, cachedUsedIndices } = handleTestGoal(T[e[i]], usedIndices);
+                usedIndices = cachedUsedIndices;
+                if (validPacka) {
+                    testSolution.push(validPacka);
+                }
             }
+
+            // if (usedSetIndices.X.includes(T[e[i]][0]) || usedSetIndices.Y.includes(T[e[i]][1]) || usedSetIndices.Z.includes(T[e[i]][2])) {
+            //     continue;
+            // } else {
+            //     testSolution.push(T[e[i]]);
+            //     usedSetIndices.X.push(T[e[i]][0]);
+            //     usedSetIndices.Y.push(T[e[i]][1]);
+            //     usedSetIndices.Z.push(T[e[i]][2]);
+            // }
         }
         if (!include(usedSolutions, testSolution)){ // get an array of *unique solutions ; * - some triplets combinations are the same but chosen in different order
             usedSolutions.push(testSolution);
         }
         // allSolutions.push(testSolution);
-        usedSetIndices = {
+        testSolution = [];
+        usedIndices = {
             X: [],
             Y: [],
             Z: [],
         };
-        testSolution = [];
     });
     hrend = process.hrtime(hrstart);
     return {
