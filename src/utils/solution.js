@@ -1,5 +1,60 @@
 const Combinatorics = require('js-combinatorics');
-const { getPermutationByRank } = require("./math");
+const { getPermutationByRank, cartesian } = require("./math");
+
+const transformToBinary = (arr) => {
+   return Array(arr.length).fill(0);
+};
+
+const binarySwap = (el) => {
+    return el === 0 ? 1 : 0;
+};
+
+
+const base = (arr) => {
+    Combinatorics.baseN([0,1], arr.length).forEach((binaryArr) => {
+        const currSolution = binaryToSolution(binaryArr, arr);
+        if(checkSolution(currSolution) !== -1){
+            console.log(checkSolution(currSolution));
+        }
+    });
+};
+
+const binaryToSolution = (binaryArr, arr) => {
+    const solution = [];
+    binaryArr.map((e, index) => {
+        if (e === 1){
+            solution.push(arr[index])
+        } else {
+            return 0;
+        }
+    });
+    return solution;
+};
+
+const checkSolution = (solution) => {
+    const cachedUsedIndices = {
+        X: [],
+        Y: [],
+        Z: [],
+    };
+    let isSolutionValid = true;
+    solution.map((packa) => {
+        if (cachedUsedIndices.X.includes(packa[0]) || cachedUsedIndices.Y.includes(packa[1]) || cachedUsedIndices.Z.includes(packa[2])) {
+            isSolutionValid = false;
+        } else {
+            cachedUsedIndices.X.push(packa[0]);
+            cachedUsedIndices.Y.push(packa[1]);
+            cachedUsedIndices.Z.push(packa[2]);
+        }
+    });
+    if (isSolutionValid){
+        return {
+            solution,
+            score: solution.length
+        }
+    } else return -1;
+
+};
 
 const handleGoal = (solution) => {
     return solution && solution.length ? solution.length : -1;
@@ -96,5 +151,7 @@ module.exports = {
     handleGoal,
     handleNextSolution,
     handleTestGoal,
-    handleGetNeighbourSolutions
+    handleGetNeighbourSolutions,
+    transformToBinary,
+    base
 };
