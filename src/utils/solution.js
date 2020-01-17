@@ -27,16 +27,18 @@ const binarySwap = (el) => {
     return el === 0 ? 1 : 0;
 };
 
-const checkSolution = (solution) => {
+const checkSolution = (solution, isFitness) => {
     const cachedUsedIndices = {
         X: [],
         Y: [],
         Z: [],
     };
     let isSolutionValid = true;
+    let howBad =  isFitness ? 1 : 0;
     solution.map((packa) => {
         if (cachedUsedIndices.X.includes(packa[0]) || cachedUsedIndices.Y.includes(packa[1]) || cachedUsedIndices.Z.includes(packa[2])) {
             isSolutionValid = false;
+            howBad -= 0.05
         } else {
             cachedUsedIndices.X.push(packa[0]);
             cachedUsedIndices.Y.push(packa[1]);
@@ -50,7 +52,7 @@ const checkSolution = (solution) => {
         }
     } else return {
         solution,
-        score: -1
+        score: parseFloat(howBad.toFixed(2))
     }
 
 };
@@ -108,5 +110,6 @@ module.exports = {
     getRandomSolution,
     findNeighbourSolution,
     getValidRandom,
-    getRandomNeighbour
+    getRandomNeighbour,
+    binarySwap
 };

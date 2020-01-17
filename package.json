@@ -19,7 +19,8 @@
     "js-combinatorics": "^0.5.4",
     "lodash": "^4.17.15",
     "mathjs": "^6.2.3",
-    "permutation": "0.0.1"
+    "permutation": "0.0.1",
+    "random": "^2.1.1"
   },
   "bugs": {
     "url": "https://github.com/kulaszewicz/3DM/issues"
